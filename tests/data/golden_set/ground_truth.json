@@ -1,0 +1,16 @@
+{
+    "contract_safe.txt": {
+        "is_safe": true,
+        "risk_score": 0.1,
+        "summary": "Analyzed contract of length 118.",
+        "reasoning": "No risky clauses found.",
+        "has_indemnity": false
+    },
+    "contract_risky.txt": {
+        "is_safe": false,
+        "risk_score": 0.9,
+        "summary": "Analyzed contract of length 136.",
+        "reasoning": "Found risky clauses.",
+        "has_indemnity": true
+    }
+}
