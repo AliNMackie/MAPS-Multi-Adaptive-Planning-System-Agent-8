@@ -1,4 +1,0 @@
-DEBUG: set called with <MagicMock id='2460880921536'>, type: <class 'unittest.mock.MagicMock'>
-DEBUG: has _ref
-DEBUG: set called with <MagicMock id='2460880920528'>, type: <class 'unittest.mock.MagicMock'>
-DEBUG: has _ref
