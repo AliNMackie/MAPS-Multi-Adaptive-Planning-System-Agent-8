@@ -1,0 +1,37 @@
+# Version Control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Documentation
+README.md
+DEPLOYMENT.md
+SECURITY.md
+implementation_plan.md
+task.md
+
+# Tests
+tests/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo

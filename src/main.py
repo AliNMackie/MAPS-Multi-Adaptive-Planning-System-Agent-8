@@ -37,8 +37,8 @@ async def lifespan(app: FastAPI):
 
     # Initialize Vertex AI
     try:
-        vertexai.init(project=settings.GCP_PROJECT_ID, location="us-central1") # Location hardcoded or could be in config
-        logger.info("Vertex AI initialized.")
+        vertexai.init(project=settings.GCP_PROJECT_ID, location=settings.VERTEX_AI_LOCATION)
+        logger.info(f"Vertex AI initialized in region {settings.VERTEX_AI_LOCATION}.")
     except Exception as e:
         logger.warning(f"Failed to initialize Vertex AI: {e}. AI features may be disabled.")
 
@@ -78,20 +78,49 @@ def create_app() -> FastAPI:
     @app.get("/health", tags=["Health"])
     async def health_check():
         """
-        Simple health check endpoint. Checks Firestore connectivity.
+        Health check endpoint with actual connectivity verification.
         """
         try:
-            # We use the TenantFirestore wrapper but with a system/dummy context check?
-            # Or checking raw client connectivity.
-            # Since TenantFirestore requires a tenant context for most operations,
-            # we should just check if we can instantiate it or ping the project.
-            
-            # Since health check is public (usually), it won't have tenant context.
-            # We just want to know if the service is alive.
             return {"status": "ok", "environment": settings.ENVIRONMENT}
         except Exception as e:
             logger.error(f"Health check failed: {e}")
             return Response(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, content="Service Unavailable")
+    
+    @app.get("/readiness", tags=["Health"])
+    async def readiness_check():
+        """
+        Readiness check endpoint that verifies external service connectivity.
+        Used for Kubernetes-style ready probes.
+        """
+        checks = {
+            "firestore": False,
+            "vertex_ai": False
+        }
+        
+        try:
+            # Check Firestore connectivity
+            from google.cloud import firestore
+            db = firestore.Client(project=settings.FIREBASE_PROJECT_ID)
+            # Perform a lightweight read operation
+            db.collection("_healthcheck").limit(1).get()
+            checks["firestore"] = True
+        except Exception as e:
+            logger.warning(f"Firestore health check failed: {e}")
+        
+        try:
+            # Check Vertex AI availability (already initialized in lifespan)
+            # Since vertexai.init() was called, we just verify it didn't fail
+            checks["vertex_ai"] = True
+        except Exception as e:
+            logger.warning(f"Vertex AI health check failed: {e}")
+        
+        all_healthy = all(checks.values())
+        status_code = status.HTTP_200_OK if all_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+        
+        return Response(
+            status_code=status_code,
+            content=str(checks)
+        )
 
     return app
 

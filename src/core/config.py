@@ -16,6 +16,12 @@ class Settings(BaseSettings):
     # Environment Configuration
     ENVIRONMENT: Literal["dev", "prod"] = Field("dev", description="Deployment environment")
     
+    # Server Configuration
+    PORT: int = Field(8080, description="Server port (required for Cloud Run/App Engine)")
+    
+    # Vertex AI Configuration
+    VERTEX_AI_LOCATION: str = Field("europe-west2", description="Vertex AI location (must be europe-west2 for UK/EU compliance)")
+    
     # CORS Configuration
     CORS_ORIGINS: List[str] = Field(
         default=["http://localhost:3000"], 

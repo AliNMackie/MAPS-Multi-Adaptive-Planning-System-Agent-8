@@ -39,7 +39,7 @@ class PromptInjectionFirewall:
         r"[\u200B-\u200D\uFEFF]", # Zero-width characters
     ]
 
-    def __init__(self, project_id: Optional[str] = None, location: str = "us-central1"):
+    def __init__(self, project_id: Optional[str] = None, location: str = "europe-west2"):
         """
         Initialize the firewall with Vertex AI settings.
         """
